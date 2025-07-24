@@ -1,9 +1,4 @@
-from re import T
-import select
-import sys
-from pathlib import Path
-from typing import Optional, Dict, Any, List, Union
-
+from .utils import *
 # OPI imports
 from opi.core import Calculator
 from opi.output.core import Output
@@ -84,31 +79,6 @@ class OPIWorkflow:
             if not self.output.results_properties.optimization.converged:
                 raise RuntimeError(f"结构优化 '{self.basename}' 未收敛")
             print("结构优化已收敛")
-
-    def get_results(self) -> Dict[str, Any]:
-        """
-        获取计算结果
-
-        返回
-        -------
-        Dict[str, Any]
-            包含计算结果的字典
-        """
-        if self.output is None:
-            raise ValueError("请先运行计算")
-
-        results = {}
-
-        if hasattr(self.output.results_properties, 'energies'):
-            results['energies'] = self.output.results_properties.energies
-
-        if hasattr(self.output.results_properties, 'geometries'):
-            results['geometries'] = self.output.results_properties.geometries
-
-        if hasattr(self.output.results_properties, 'frequencies'):
-            results['frequencies'] = self.output.results_properties.frequencies
-
-        return results
 
     def set_custom_parameters(self, parameters: str) -> None:
         """
