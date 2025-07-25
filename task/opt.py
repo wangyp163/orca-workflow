@@ -124,7 +124,7 @@ class optWorkflow(OPIWorkflow):
                 fig, ax = plt.subplots(figsize=(10, 6))
                 
                 # Plot energy trajectory
-                x_indices = list(range(len(energy_data)))
+                x_indices = list(range(1, len(energy_data) + 1))  # 从1开始计数
                 ax.plot(x_indices, energy_data, 'b-o', linewidth=2, markersize=4, label='SCF Energy')
                 
                 # Mark final energy
@@ -137,6 +137,12 @@ class optWorkflow(OPIWorkflow):
                 ax.set_xlabel('Geometry Index', fontsize=12)
                 ax.set_ylabel('Energy (Hartree)', fontsize=12)
                 
+                # Set x-axis to show only integers (1,2,3,4,5...) and y-axis to 2 decimal places
+                from matplotlib.ticker import FormatStrFormatter, MaxNLocator
+                ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+                ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+                ax.yaxis.set_major_formatter(FormatStrFormatter('%.6f'))
+                
                 # Add grid and legend
                 ax.grid(True, alpha=0.3)
                 ax.legend()
@@ -146,11 +152,11 @@ class optWorkflow(OPIWorkflow):
                 plt.savefig('energy_trajectory.png', dpi=300, bbox_inches='tight')
                 plt.close()
                 
-                print(f"Energy trajectory plot saved: energy_trajectory.png")
-                print(f"Number of geometries: {len(energy_data)}")
-                print(f"Initial energy: {energy_data[0]:.6f} Hartree")
-                print(f"Final energy: {energy_data[-1]:.6f} Hartree")
-                print(f"Energy reduction: {energy_data[0] - energy_data[-1]:.6f} Hartree")
+                print(f"收敛趋势图: opt_energy_trajectory.png")
+                print(f"构型迭代数: {len(energy_data)}")
+                print(f"初始能量: {energy_data[0]:.6f} Hartree")
+                print(f"最终能量: {energy_data[-1]:.6f} Hartree")
+                print(f"能量降低: {energy_data[0] - energy_data[-1]:.6f} Hartree")
                 
         except ImportError:
             print("Warning: matplotlib not installed, cannot plot energy trajectory")
