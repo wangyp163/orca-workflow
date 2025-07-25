@@ -41,14 +41,29 @@ class spWorkflow(OPIWorkflow):
         self.calc.input.add_simple_keywords(*sk_list)
         self.calc.write_input()
 
-    def sp_post(self):
-        self.calc.read_output()
+    def post_sp(self):
+        output = self.calc.get_output()
+        if not output.terminated_normally():
+            print(f"ORCA calculation failed, see output file: {output.get_outfile()}")
+            sys.exit(1)
+        # << END OF IF
 
-if __name__ == "__main__":
-    xyz_file = sys.argv[1] if len(sys.argv) > 1 else Path("test_water.xyz")
-    workflow = spWorkflow(basename=f"{xyz_file.stem}", working_dir=Path("opt"))
-    workflow.setup_structure(xyz_file=xyz_file)
-    workflow.setup_calculator(ncores=32)
-    workflow.sp_pre()
-    results = workflow.sp_post()
-    print(results)
+        # > Parse JSON files
+        output.parse()
+
+        # 检查SCF收敛情况
+        if output.results_properties.geometries[0].single_point_data.converged:
+            print("SCF已收敛")
+        else:
+            print("SCF未收敛")
+            sys.exit(1)
+
+        print("单点能：")
+        print(output.get_final_energy())
+        # > is (for this calculation) equal to
+        # print(output.results_properties.geometries[0].single_point_data.finalenergy)
+        # > is (for this calculation) equal to
+        # print(
+        #     output.results_properties.geometries[0].energy[0].totalenergy[0][0]
+        #     + output.results_properties.geometries[0].vdw_correction.vdw
+        # )

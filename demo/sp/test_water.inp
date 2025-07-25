@@ -5,7 +5,7 @@
 !def2-tzvp
 !b3lyp
 %pal
-    nprocs 32
+    nprocs 2 
 end
 
 %output
